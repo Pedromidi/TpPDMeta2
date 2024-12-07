@@ -1,4 +1,4 @@
-package com.example.tppdm2;
+package com.example.tppdm2.servidor;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

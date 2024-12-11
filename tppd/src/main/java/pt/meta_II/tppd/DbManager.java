@@ -167,7 +167,8 @@ public class DbManager {
         this.updated = updated;
     }
 
-    //Alterações--------------------------------------------------------------------------------------------------------------------
+//Alterações--------------------------------------------------------------------------------------------------------------------
+
     //Adicionar---------------------------------------------------------------------------------------------
     public boolean adicionaRegisto(String email, String nome, int telefone, String password){
         String query = "INSERT INTO utilizador (email, nome, telefone, password) VALUES (?, ?, ?, ?)";

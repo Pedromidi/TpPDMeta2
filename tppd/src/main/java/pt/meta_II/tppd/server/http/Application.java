@@ -1,6 +1,7 @@
 package pt.meta_II.tppd.server.http;
 
 
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import pt.meta_II.tppd.DbManager;
 import pt.meta_II.tppd.server.http.security.RsaKeysProperties;
 import pt.meta_II.tppd.server.http.security.UserAuthenticationProvider;
@@ -33,8 +34,6 @@ import org.springframework.security.web.SecurityFilterChain;
 public class Application {
 
 	public static DbManager manager;
-
-	public static String resourceDirectory;
 	private final RsaKeysProperties rsaKeys;
 
 	public Application(RsaKeysProperties rsaKeys) {
@@ -48,7 +47,7 @@ public class Application {
 		private UserAuthenticationProvider authProvider;
 
 		@Autowired
-		public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception {
+		public void configAuthentication(AuthenticationManagerBuilder auth){
 			auth.authenticationProvider(authProvider);
 		}
 
@@ -78,7 +77,7 @@ public class Application {
 			return http
 					.csrf(csrf -> csrf.disable())
 					.authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
-
+					.oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
 					.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 					.build();
 		}

@@ -3,9 +3,9 @@ package pt.meta_II.tppd.server.http.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.meta_II.tppd.DbManager;
-import pt.meta_II.tppd.server.http.Application;
 
 
 @RestController
@@ -39,15 +39,18 @@ public class DBController {
     }
 
 
-    @GetMapping("grupos/{email}")
-    public ResponseEntity getImageLength(@PathVariable("email") String email) {
+    @GetMapping("/grupos")
+    public ResponseEntity grupos(Authentication authentication) {
 
-        String lista = manager.listaGrupos(email);
+        if(authentication.getName() != null) {
 
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType("text/plain"))
-                .body("\nLista de grupos: " + (lista.equals("")? "\nNão pertence a nenhum grupo.." :lista));
+            String lista = manager.listaGrupos(authentication.getName());
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType("text/plain"))
+                    .body("\nLista de grupos: " + (lista.isEmpty() ? "\nNão pertence a nenhum grupo.." :lista));
+
+        }
+        else return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Content not found");
     }
-
-
 }

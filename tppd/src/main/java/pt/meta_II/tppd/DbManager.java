@@ -364,17 +364,17 @@ public class DbManager {
      * @param id
      * @return
      */
-    public boolean eliminarDespesa(String id){
+    public boolean eliminarDespesa(int id){
         String dependencias = "DELETE FROM despesa_partilhada WHERE id_despesa = ? ";
         String despesa = "DELETE FROM despesa WHERE id = ?";
         try{
             PreparedStatement stmt1 = connection.prepareStatement(dependencias);
-            stmt1.setString(1, id);
+            stmt1.setInt(1, id);
             stmt1.executeUpdate();
             setLastQuery(dependencias);
 
             PreparedStatement stmt2 = connection.prepareStatement(despesa);
-            stmt2.setString(1, id);
+            stmt2.setInt(1, id);
             stmt2.executeUpdate();
             setLastQuery(despesa);
 
@@ -793,12 +793,12 @@ public class DbManager {
      * @return true, existe
      * @return false, nao existe
      */
-    public Boolean verificaId(String id, String entidade) {
+    public Boolean verificaId(int id, String entidade) {
 
         String query = "SELECT EXISTS (select 1 FROM " + entidade + " WHERE id = ?)";
         try{
             PreparedStatement stmt = connection.prepareStatement(query);
-            stmt.setString(1,id);
+            stmt.setInt(1,id);
 
             ResultSet rs = stmt.executeQuery();
             return rs.getBoolean(1);

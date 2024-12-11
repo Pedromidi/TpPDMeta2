@@ -1,8 +1,4 @@
-package com.example.tppd;
-
-import com.example.tppd.server.RMI.RMIService;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+package pt.meta_II.tppd.server.RMI;
 
 import java.net.MalformedURLException;
 import java.rmi.AlreadyBoundException;
@@ -10,12 +6,9 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-
-@SpringBootApplication
-public class TppdApplication {
+public class RMIApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(TppdApplication.class, args);
 
         try{
             LocateRegistry.createRegistry(Registry.REGISTRY_PORT);

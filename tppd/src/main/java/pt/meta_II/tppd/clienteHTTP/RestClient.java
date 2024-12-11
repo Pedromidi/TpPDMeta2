@@ -1,4 +1,4 @@
-package com.example.tppdclient;
+package pt.meta_II.tppd.clienteHTTP;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;

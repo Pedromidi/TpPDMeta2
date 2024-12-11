@@ -18,8 +18,4 @@ public class AuthController {
         return tokenService.generateToken(authentication);
     }
 
-    @GetMapping("/authorization")
-    public String authorization(Authentication authentication) {
-        return authentication.getAuthorities().toString();
-    }
 }

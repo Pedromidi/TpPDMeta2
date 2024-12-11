@@ -228,7 +228,7 @@ public class DbManager {
         }
     }
 
-    public int adicionaDespesa(String email, String grupo, String valor, String data, String email_pagador,String descricao){
+    public int adicionaDespesa(String email, String grupo, float valor, String data, String email_pagador,String descricao){
 
         String getnovoID = "SELECT MAX(id) FROM despesa";
         String query = "INSERT INTO despesa (id, data, valor, descricao, nome_grupo, email_criador, email_pagador) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -239,7 +239,7 @@ public class DbManager {
 
             PreparedStatement stmt = connection.prepareStatement(query);
             stmt.setInt(1, rs.getInt(1)+1);
-            stmt.setString(2, data);      stmt.setString(3, valor);
+            stmt.setString(2, data);      stmt.setFloat(3, valor);
             stmt.setString(4, descricao); stmt.setString(5, grupo);
             stmt.setString(6, email);     stmt.setString(7, email_pagador);
 

@@ -19,9 +19,9 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
         DbManager manager = DbManager.getInstance();
 
         if(manager.verificaEmail(username) && manager.verificaPassword(username,password)){
-            return new UsernamePasswordAuthenticationToken(username, password, null);
+             return new UsernamePasswordAuthenticationToken(username, password, null);
         }else {
-            throw new BadCredentialsException("Usuário não encontrado");
+            throw new BadCredentialsException("Não foi encontrado este utilizador");
         }
     }
 

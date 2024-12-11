@@ -1,10 +1,9 @@
-package pt.meta_II.tppd.server.http;
+package pt.meta_II.tppd.servers.http;
 
 
-import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import pt.meta_II.tppd.DbManager;
-import pt.meta_II.tppd.server.http.security.RsaKeysProperties;
-import pt.meta_II.tppd.server.http.security.UserAuthenticationProvider;
+import pt.meta_II.tppd.servers.http.security.RsaKeysProperties;
+import pt.meta_II.tppd.servers.http.security.UserAuthenticationProvider;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -28,17 +27,47 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import static java.lang.System.exit;
+
 
 @SpringBootApplication
 @ConfigurationPropertiesScan
 public class Application {
 
-	public static DbManager manager;
 	private final RsaKeysProperties rsaKeys;
 
 	public Application(RsaKeysProperties rsaKeys) {
 		this.rsaKeys = rsaKeys;
 	}
+
+	public static void main(String[] args) {
+		SpringApplication.run(Application.class, args);
+	}
+
+	@Bean
+	public DbManager dbManager(){
+		DbManager manager = new DbManager("DataBase" ,"TP_DB.db");
+		if(DbManager.getInstance()!=null){
+			System.out.println("Conexão com a Base de Dados estabelecida!");
+		}else{
+			System.out.println("Erro ao conectar com a Base de Dados");
+			exit(1);
+		}
+		return manager;
+	}
+
+	@Bean
+	JwtEncoder jwtEncoder() {
+		JWK jwk = new RSAKey.Builder(rsaKeys.publicKey()).privateKey(rsaKeys.privateKey()).build();
+		JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(jwk));
+		return new NimbusJwtEncoder(jwkSource);
+	}
+
+	@Bean
+	JwtDecoder jwtDecoder() {
+		return NimbusJwtDecoder.withPublicKey(rsaKeys.publicKey()).build();
+	}
+
 
 	@Configurable
 	@EnableWebSecurity
@@ -83,23 +112,5 @@ public class Application {
 		}
 	}
 
-	@Bean
-	JwtEncoder jwtEncoder() {
-		JWK jwk = new RSAKey.Builder(rsaKeys.publicKey()).privateKey(rsaKeys.privateKey()).build();
-		JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(jwk));
-		return new NimbusJwtEncoder(jwkSource);
-	}
-
-	@Bean
-	JwtDecoder jwtDecoder() {
-		return NimbusJwtDecoder.withPublicKey(rsaKeys.publicKey()).build();
-	}
-
-	public static void main(String[] args) {
-		manager = new DbManager("DataBase" ,"TP_DB.db");
-		System.out.println(manager.connect());
-
-		SpringApplication.run(Application.class, args);
-	}
 }
 

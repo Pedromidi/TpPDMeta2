@@ -1,6 +1,6 @@
-package pt.meta_II.tppd.server.http.controllers;
+package pt.meta_II.tppd.servers.http.controllers;
 
-import pt.meta_II.tppd.server.http.security.TokenService;
+import pt.meta_II.tppd.servers.http.security.TokenService;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

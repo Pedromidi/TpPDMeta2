@@ -16,13 +16,17 @@ public class DbManager {
 
     private static DbManager singleton = null;
 
-    public DbManager(String dbAdress, String dbName){
+    public DbManager(String dbAddress, String dbName){
+        singleton = new DbManager(dbAddress, dbName,0);
+    }
+
+    private DbManager(String dbAdress, String dbName, int extra){
         this.dbAdress = dbAdress;
         this.dbName = dbName;
         this.lastQuery = "none";
         this.updated = false;
-        //this.dbPath = "jdbc:sqlite:" + dbAdress + File.separator + dbName;
         this.dbPath = "jdbc:sqlite:" + dbAdress + File.separator + dbName;
+        this.connect();
         singleton = this;
     }
 
@@ -30,20 +34,21 @@ public class DbManager {
         return singleton;
     }
 
-    public String connect (){
+    public boolean connect (){
         try {
-            connection = DriverManager.getConnection(dbPath); //se nao encontra ao ficheiro cria um novo
+            connection = DriverManager.getConnection(dbPath);
             connection.setAutoCommit(true);
 
-            if(connection == null) return "Falha na Conexão a Base de Dados";
+            if(connection == null) return false;
             criaTabelasBD();
 
             Statement stmt = connection.createStatement(); //No SQLite, as chaves estrangeiras estão desativadas por padrão. Mesmo que as relações sejam definidas corretamente, elas não terão efeito se as chaves estrangeiras não estiverem ativadas.
             stmt.execute("PRAGMA foreign_keys = ON;");
-            return "Conexão com a Base de Dados estabelecida!";
+            return true;
 
         } catch (SQLException e) { //se não conseguir conetar
-            return e.getMessage();
+            System.out.println(e.getMessage());
+            return false;
         }
     }
 

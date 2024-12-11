@@ -1,4 +1,4 @@
-package pt.meta_II.tppd.server.http.security;
+package pt.meta_II.tppd.servers.http.security;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;

@@ -1,4 +1,4 @@
-package pt.meta_II.tppd.server.RMI;
+package pt.meta_II.tppd.servers.RMI;
 
 import pt.meta_II.tppd.clienteRMI.ObserverInterface;
 

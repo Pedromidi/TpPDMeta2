@@ -1,4 +1,4 @@
-package pt.meta_II.tppd.server.http.controllers;
+package pt.meta_II.tppd.servers.http.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,12 +11,15 @@ import pt.meta_II.tppd.DbManager;
 @RestController
 public class DBController {
 
-    DbManager manager =  DbManager.getInstance();
+    ;
 
     @PostMapping("/register")
     public ResponseEntity register(@RequestParam(value = "email") String email, @RequestParam(value = "nome") String nome,
                                    @RequestParam(value = "telefone") int telefone, @RequestParam(value = "password") String password) {
-        if ( manager.verificaEmail(email)) {
+
+        DbManager manager =  DbManager.getInstance();
+
+        if (manager.verificaEmail(email)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .contentType(MediaType.parseMediaType("text/plain"))
                     .body("Email já existente na Base de Dados.");
@@ -42,6 +45,8 @@ public class DBController {
     @GetMapping("/grupos")
     public ResponseEntity grupos(Authentication authentication) {
 
+        DbManager manager =  DbManager.getInstance();
+
         if(authentication.getName() != null) {
 
             String lista = manager.listaGrupos(authentication.getName());
@@ -49,7 +54,6 @@ public class DBController {
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType("text/plain"))
                     .body("\nLista de grupos: " + (lista.isEmpty() ? "\nNão pertence a nenhum grupo.." :lista));
-
         }
         else return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Content not found");
     }

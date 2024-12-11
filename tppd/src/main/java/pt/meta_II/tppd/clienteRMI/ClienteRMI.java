@@ -1,6 +1,6 @@
 package pt.meta_II.tppd.clienteRMI;
 
-import pt.meta_II.tppd.server.RMI.RMIServiceInterface;
+import pt.meta_II.tppd.servers.RMI.RMIServiceInterface;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;

@@ -1,4 +1,4 @@
-package pt.meta_II.tppd.server.http.security;
+package pt.meta_II.tppd.servers.http.security;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

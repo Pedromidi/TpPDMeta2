@@ -1,4 +1,4 @@
-package pt.meta_II.tppd.clients.http;
+package pt.meta_II.tppd.clienteHTTP;
 
 import java.io.IOException;
 import java.io.OutputStream;

@@ -24,7 +24,13 @@ public class HttpClient {
                 int opcao = scanner.nextInt();
 
                 if(opcao == 1){
-                    authenticate(scanner);
+                    System.out.println("=== Autenticar ===");
+                    System.out.print("Email: ");
+                    String email = scanner.next();
+                    System.out.print("Senha: ");
+                    String password = scanner.next();
+
+                    authenticate(email,password);
                     if (jwtToken!=null)
                         break;
                 }
@@ -91,16 +97,7 @@ public class HttpClient {
 
         sendRequest(request, "POST", null, false);
 
-        authenticatev2(email,password);
-    }
-
-    private static void authenticate(Scanner scanner) {
-        System.out.println("=== Autenticar ===");
-        System.out.print("Email: ");
-        String email = scanner.next();
-        System.out.print("Senha: ");
-        String password = scanner.next();
-
+        //authenticate(email,password);
         String credentials = Base64.getEncoder().encodeToString((email + ":" + password).getBytes());
         HttpURLConnection connection = null;
         try {
@@ -109,18 +106,6 @@ public class HttpClient {
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Authorization", "Basic " + credentials);
             connection.setDoOutput(true);
-
-            int responseCode = connection.getResponseCode();
-            if (responseCode == 200) {
-                Scanner responseScanner = new Scanner(connection.getInputStream());
-                if (responseScanner.hasNext()) {
-                    jwtToken = responseScanner.nextLine();
-                    System.out.println("Autenticação bem-sucedida. Token JWT recebido.");
-                }
-                responseScanner.close();
-            } else {
-                System.out.println("Falha na autenticação. Código: " + responseCode);
-            }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -130,7 +115,7 @@ public class HttpClient {
         }
     }
 
-    private static void authenticatev2(String email, String password) {
+    private static void authenticate(String email, String password) {
         String credentials = Base64.getEncoder().encodeToString((email + ":" + password).getBytes());
         HttpURLConnection connection = null;
         try {
@@ -148,9 +133,19 @@ public class HttpClient {
                     System.out.println("Autenticação bem-sucedida. Token JWT recebido.");
                 }
                 responseScanner.close();
-            } else {
-                System.out.println("Falha na autenticação. Código: " + responseCode);
             }
+                else {
+                    System.out.println("Erro na requisição. Código de resposta: " + responseCode);
+                    if (connection.getErrorStream() != null) {
+                        Scanner errorScanner = new Scanner(connection.getErrorStream());
+                        System.out.println("Mensagem de erro:");
+                        while (errorScanner.hasNextLine()) {
+                            System.out.println(errorScanner.nextLine());
+                        }
+                        errorScanner.close();
+                    }
+                }
+
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -169,11 +164,16 @@ public class HttpClient {
         System.out.println("\n=== Inserir Despesa ===");
         System.out.print("Nome do Grupo: ");
         String group = scanner.nextLine();
-        System.out.print("Descrição: ");
-        String description = scanner.nextLine();
-        //TODO completar --> partilhas, quem recebeu, data
+        System.out.print("Quem Pagou: ");
+        String quem = scanner.nextLine();
         System.out.print("Valor: ");
         float value = scanner.nextFloat();
+        System.out.print("Data (dd/mm/aa): ");
+        String data = scanner.next();
+
+        System.out.print("Descrição: ");
+        String description = scanner.nextLine();
+
         scanner.nextFloat(); // Consumir nova linha
 
         //TODO, o metodo nao está a receber uma string.... mas sim uma Despesa, e tbm não é no corpo...
@@ -221,16 +221,23 @@ public class HttpClient {
 
             int responseCode = connection.getResponseCode();
 
-            System.out.println("Código de resposta: " + responseCode);
             if (responseCode == 200 || responseCode == 201) {
+                System.out.println("Código de resposta: " + responseCode);
                 Scanner responseScanner = new Scanner(connection.getInputStream());
                 while (responseScanner.hasNextLine()) {
                     System.out.println(responseScanner.nextLine());
                 }
                 responseScanner.close();
             } else {
-                System.out.println("Erro na requisição");
-
+                System.out.println("Erro na requisição. Código de resposta: " + responseCode);
+                if (connection.getErrorStream() != null) {
+                    Scanner errorScanner = new Scanner(connection.getErrorStream());
+                    System.out.println("Mensagem de erro:");
+                    while (errorScanner.hasNextLine()) {
+                        System.out.println(errorScanner.nextLine());
+                    }
+                    errorScanner.close();
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

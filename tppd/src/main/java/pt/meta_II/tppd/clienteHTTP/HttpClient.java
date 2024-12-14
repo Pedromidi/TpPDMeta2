@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Base64;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class HttpClient {
@@ -14,43 +15,61 @@ public class HttpClient {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
+        do {
+            System.out.println("\nSelecione uma opção:");
+            System.out.println("1. Autenticar");
+            System.out.println("2. Registrar");
+
+
+            try{
+                int opcao = scanner.nextInt();
+
+                if(opcao == 1){
+                    authenticate(scanner);
+                    if (jwtToken!=null)
+                        break;
+                }
+                if (opcao == 2)
+                    register(scanner);
+                else System.out.println("\nNúmero Inválido. Tente novamente");
+            }catch (InputMismatchException e){
+                System.out.println("\nNúmero Inválido. Tente novamente");
+            }
+        }while (true);
+
         while (true) {
             System.out.println("Selecione uma opção:");
-            System.out.println("1. Registrar");
-            System.out.println("2. Autenticar");
-            System.out.println("3. Listar grupos");
-            System.out.println("4. Inserir despesa");
-            System.out.println("5. Listar despesas");
-            System.out.println("6. Eliminar despesa");
+            System.out.println("1. Listar grupos");
+            System.out.println("2. Inserir despesa");
+            System.out.println("3. Listar despesas");
+            System.out.println("4. Eliminar despesa");
             System.out.println("0. Sair");
 
-            int opcao = scanner.nextInt();
-            scanner.nextLine(); // Consumir nova linha
+            try{
+                int opcao = scanner.nextInt();
+                scanner.nextInt();
 
-            switch (opcao) {
-                case 1:
-                    register(scanner);
-                    break;
-                case 2:
-                    authenticate(scanner);
-                    break;
-                case 3:
-                    listGroups();
-                    break;
-                case 4:
-                    insertExpense(scanner);
-                    break;
-                case 5:
-                    listExpenses(scanner);
-                    break;
-                case 6:
-                    deleteExpense(scanner);
-                    break;
-                case 0:
-                    System.out.println("Saindo...");
-                    return;
-                default:
-                    System.out.println("Opção inválida.");
+                switch (opcao) {
+                    case 1:
+                        listGroups();
+                        break;
+                    case 2:
+                        insertExpense(scanner);
+                        break;
+                    case 3:
+                        listExpenses(scanner);
+                        break;
+                    case 4:
+                        deleteExpense(scanner);
+                        break;
+                    case 0:
+                        System.out.println("A sair...");
+                        return;
+                    default:
+                        System.out.println("Opção inválida.");
+                }
+            }catch (InputMismatchException e){
+                System.out.println("Número Inválido. Tente novamente");
             }
         }
     }
@@ -58,26 +77,25 @@ public class HttpClient {
     private static void register(Scanner scanner) {
         System.out.println("=== Registrar ===");
         System.out.print("Nome: ");
-        String name = scanner.nextLine();
+        String nome = scanner.next();
         System.out.print("Email: ");
-        String email = scanner.nextLine();
+        String email = scanner.next();
         System.out.print("Telefone: ");
-        String phone = scanner.nextLine();
+        String phone = scanner.next();
         System.out.print("Senha: ");
-        String password = scanner.nextLine();
+        String password = scanner.next();
 
-        String body = String.format("{\"name\":\"%s\",\"email\":\"%s\",\"phone\":\"%s\",\"password\":\"%s\"}",
-                name, email, phone, password);
+        String request =  "http://localhost:8080/register?email="+email+"&nome="+nome+"&telefone="+phone+"&password="+ password;
 
-        sendRequest("http://localhost:8080/register", "POST", body, false);
+        sendRequest(request, "POST", null, false);
     }
 
     private static void authenticate(Scanner scanner) {
         System.out.println("=== Autenticar ===");
         System.out.print("Email: ");
-        String email = scanner.nextLine();
+        String email = scanner.next();
         System.out.print("Senha: ");
-        String password = scanner.nextLine();
+        String password = scanner.next();
 
         String credentials = Base64.getEncoder().encodeToString((email + ":" + password).getBytes());
         HttpURLConnection connection = null;
@@ -115,13 +133,14 @@ public class HttpClient {
 
     private static void insertExpense(Scanner scanner) {
         System.out.println("=== Inserir Despesa ===");
-        System.out.print("ID do Grupo: ");
+        System.out.print("Nome do Grupo: ");
         String groupId = scanner.nextLine();
         System.out.print("Descrição: ");
         String description = scanner.nextLine();
+        //TODO completar --> partilhas, quem recebeu
         System.out.print("Valor: ");
-        double value = scanner.nextDouble();
-        scanner.nextLine(); // Consumir nova linha
+        float value = scanner.nextFloat();
+        scanner.nextFloat(); // Consumir nova linha
 
         String body = String.format("{\"description\":\"%s\",\"value\":%f}", description, value);
         sendRequest("http://localhost:8080/groups/" + groupId + "/expenses", "POST", body, true);
@@ -129,17 +148,17 @@ public class HttpClient {
 
     private static void listExpenses(Scanner scanner) {
         System.out.println("=== Listar Despesas ===");
-        System.out.print("ID do Grupo: ");
+        System.out.print("Nome do Grupo: ");
         String groupId = scanner.nextLine();
         sendRequest("http://localhost:8080/groups/" + groupId + "/expenses", "GET", null, true);
     }
 
     private static void deleteExpense(Scanner scanner) {
         System.out.println("=== Eliminar Despesa ===");
-        System.out.print("ID do Grupo: ");
+        System.out.print("Nome do Grupo: ");
         String groupId = scanner.nextLine();
         System.out.print("ID da Despesa: ");
-        String expenseId = scanner.nextLine();
+        int expenseId = scanner.nextInt();
         sendRequest("http://localhost:8080/groups/" + groupId + "/expenses/" + expenseId, "DELETE", null, true);
     }
 
@@ -164,6 +183,8 @@ public class HttpClient {
             }
 
             int responseCode = connection.getResponseCode();
+
+
             System.out.println("Código de resposta: " + responseCode);
             if (responseCode == 200 || responseCode == 201) {
                 Scanner responseScanner = new Scanner(connection.getInputStream());
@@ -172,7 +193,12 @@ public class HttpClient {
                 }
                 responseScanner.close();
             } else {
-                System.out.println("Erro na requisição.");
+                System.out.println("Erro na requisição - >");
+                Scanner responseScanner = new Scanner(connection.getInputStream());
+                while (responseScanner.hasNextLine()) {
+                    System.out.println(responseScanner.nextLine());
+                }
+                responseScanner.close();
             }
         } catch (IOException e) {
             e.printStackTrace();

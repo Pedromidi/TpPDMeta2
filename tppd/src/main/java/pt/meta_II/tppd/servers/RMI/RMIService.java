@@ -1,5 +1,6 @@
 package pt.meta_II.tppd.servers.RMI;
 
+import pt.meta_II.tppd.DbManager;
 import pt.meta_II.tppd.clienteRMI.ObserverInterface;
 
 import java.rmi.RemoteException;
@@ -10,6 +11,7 @@ import java.util.List;
 public class RMIService extends UnicastRemoteObject implements RMIServiceInterface {
     List<ObserverInterface> observers;
     String change;
+    DbManager dbManager;
 
     public void notifyObservers(){
         for (ObserverInterface o : this.observers) {
@@ -21,9 +23,10 @@ public class RMIService extends UnicastRemoteObject implements RMIServiceInterfa
         }
     }
 
-    public RMIService() throws RemoteException {
+    public RMIService(DbManager db) throws RemoteException {
         this.change = "none";
         this.observers = new ArrayList<>();
+        this.dbManager = db;
     }
 
     @Override
@@ -33,12 +36,12 @@ public class RMIService extends UnicastRemoteObject implements RMIServiceInterfa
 
     @Override
     public String getUsers() throws RemoteException{
-        return "aqui estao os users";
+        return dbManager.listAllUsers();
     }
 
     @Override
     public String getGroups() throws RemoteException{
-        return "aqui estao os groups";
+        return dbManager.listAllGrupos();
     }
 
     @Override

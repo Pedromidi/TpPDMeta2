@@ -31,7 +31,6 @@ public class ClienteRMI  {
                         Escolha uma opção:
                         1 - Listar grupos
                         2 - Listar utilizadores
-                        3 - Sair
                         Opção:\s""");
 
                 if (sc.hasNextInt()) {

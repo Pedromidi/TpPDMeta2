@@ -52,7 +52,7 @@ public class RMIService extends UnicastRemoteObject implements RMIServiceInterfa
 
     @Override
     public void autenticaUsers() throws RemoteException {
-        this.change = "Foi registado um utilizador";
+        this.change = "Foi autenticado um utilizador";
         notifyObservers();
     }
 

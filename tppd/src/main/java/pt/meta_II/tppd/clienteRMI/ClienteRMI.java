@@ -38,7 +38,6 @@ public class ClienteRMI  {
                     switch (op) {
                         case 1 -> System.out.println(service.getGroups());
                         case 2 -> System.out.println(service.getUsers());
-                        case 3 -> end = true;
                         default -> System.out.println("Por favor escolha uma opção válida");
                     }
                 } else {

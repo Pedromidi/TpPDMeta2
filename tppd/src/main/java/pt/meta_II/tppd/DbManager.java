@@ -129,6 +129,38 @@ public class DbManager {
 
     }
 
+    public String listAllGrupos(){
+        String query = "SELECT nome FROM grupo";
+        try{
+            PreparedStatement stmt = connection.prepareStatement(query);
+
+            ResultSet rs = stmt.executeQuery();
+            StringBuilder result = new StringBuilder();
+            while(rs.next()){
+                result.append("\n - " + rs.getString(1));
+            }
+            return result.toString();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String listAllUsers(){
+        String query = "SELECT nome FROM utilizador";
+        try{
+            PreparedStatement stmt = connection.prepareStatement(query);
+
+            ResultSet rs = stmt.executeQuery();
+            StringBuilder result = new StringBuilder();
+            while(rs.next()){
+                result.append("\n - " + rs.getString(1));
+            }
+            return result.toString();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public int getDbVersion() {
         String query = "SELECT numero FROM versao";
         try (PreparedStatement s = connection.prepareStatement(query);

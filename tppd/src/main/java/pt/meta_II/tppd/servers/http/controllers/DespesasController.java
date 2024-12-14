@@ -90,7 +90,6 @@ public class DespesasController {
                 .body("Precisa de estar logado para aceder a este conteúdo");
     }
 
-
     @PostMapping("/{grupo}/adicionar")
     public ResponseEntity adicionar(@PathVariable("grupo") String grupo, @RequestParam(value = "despesa") Despesa d, Authentication authentication){
 

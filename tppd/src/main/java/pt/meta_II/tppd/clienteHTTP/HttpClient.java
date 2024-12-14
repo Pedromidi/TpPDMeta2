@@ -20,7 +20,6 @@ public class HttpClient {
             System.out.println("1. Autenticar");
             System.out.println("2. Registrar");
 
-
             try{
                 int opcao = scanner.nextInt();
 
@@ -128,38 +127,39 @@ public class HttpClient {
 
     private static void listGroups() {
         System.out.println("=== Listar Grupos ===");
-        sendRequest("http://localhost:8080/groups", "GET", null, true);
+        sendRequest("http://localhost:8080/grupos", "GET", null, true);
     }
 
     private static void insertExpense(Scanner scanner) {
         System.out.println("=== Inserir Despesa ===");
         System.out.print("Nome do Grupo: ");
-        String groupId = scanner.nextLine();
+        String group = scanner.nextLine();
         System.out.print("Descrição: ");
         String description = scanner.nextLine();
-        //TODO completar --> partilhas, quem recebeu
+        //TODO completar --> partilhas, quem recebeu, data
         System.out.print("Valor: ");
         float value = scanner.nextFloat();
         scanner.nextFloat(); // Consumir nova linha
 
+        //TODO, o metodo nao está a receber uma string.... mas sim uma Despesa, e tbm não é no corpo...
         String body = String.format("{\"description\":\"%s\",\"value\":%f}", description, value);
-        sendRequest("http://localhost:8080/groups/" + groupId + "/expenses", "POST", body, true);
+        sendRequest("http://localhost:8080/" + group + "/adicionar", "POST", body, true);
     }
 
     private static void listExpenses(Scanner scanner) {
         System.out.println("=== Listar Despesas ===");
         System.out.print("Nome do Grupo: ");
-        String groupId = scanner.nextLine();
-        sendRequest("http://localhost:8080/groups/" + groupId + "/expenses", "GET", null, true);
+        String group = scanner.nextLine();
+        sendRequest("http://localhost:8080/" + group + "/despesas", "GET", null, true);
     }
 
     private static void deleteExpense(Scanner scanner) {
         System.out.println("=== Eliminar Despesa ===");
         System.out.print("Nome do Grupo: ");
-        String groupId = scanner.nextLine();
+        String group = scanner.nextLine();
         System.out.print("ID da Despesa: ");
         int expenseId = scanner.nextInt();
-        sendRequest("http://localhost:8080/groups/" + groupId + "/expenses/" + expenseId, "DELETE", null, true);
+        sendRequest("http://localhost:8080/" + group + "/eliminar?id=" + expenseId, "POST", null, true);
     }
 
     private static void sendRequest(String urlString, String method, String body, boolean requiresAuth) {

@@ -5,10 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="599ad407-075f-42cb-9510-9dd5b297adcf" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/tppd/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/tppd/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tppd/DataBase/TP_DB.db" beforeDir="false" afterPath="$PROJECT_DIR$/tppd/DataBase/TP_DB.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tppd/src/main/java/pt/meta_II/tppd/clienteHTTP/HttpClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/tppd/src/main/java/pt/meta_II/tppd/clienteHTTP/HttpClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tppd/target/classes/pt/meta_II/tppd/clienteHTTP/RestClient.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tppd/src/main/java/pt/meta_II/tppd/servers/http/controllers/DespesasController.java" beforeDir="false" afterPath="$PROJECT_DIR$/tppd/src/main/java/pt/meta_II/tppd/servers/http/controllers/DespesasController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tppd/target/classes/pt/meta_II/tppd/clienteHTTP/HttpClient.class" beforeDir="false" afterPath="$PROJECT_DIR$/tppd/target/classes/pt/meta_II/tppd/clienteHTTP/HttpClient.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tppd/target/classes/pt/meta_II/tppd/servers/http/controllers/DespesasController.class" beforeDir="false" afterPath="$PROJECT_DIR$/tppd/target/classes/pt/meta_II/tppd/servers/http/controllers/DespesasController.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

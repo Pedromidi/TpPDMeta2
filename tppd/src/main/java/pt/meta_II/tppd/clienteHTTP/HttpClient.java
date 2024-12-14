@@ -28,8 +28,12 @@ public class HttpClient {
                     if (jwtToken!=null)
                         break;
                 }
-                if (opcao == 2)
+                if (opcao == 2){
                     register(scanner);
+                    if (jwtToken!=null)
+                        break;
+                }
+
                 else System.out.println("\nNúmero Inválido. Tente novamente");
             }catch (InputMismatchException e){
                 System.out.println("\nNúmero Inválido. Tente novamente");
@@ -37,7 +41,7 @@ public class HttpClient {
         }while (true);
 
         while (true) {
-            System.out.println("Selecione uma opção:");
+            System.out.println("\nSelecione uma opção:");
             System.out.println("1. Listar grupos");
             System.out.println("2. Inserir despesa");
             System.out.println("3. Listar despesas");
@@ -46,7 +50,6 @@ public class HttpClient {
 
             try{
                 int opcao = scanner.nextInt();
-                scanner.nextInt();
 
                 switch (opcao) {
                     case 1:
@@ -87,6 +90,8 @@ public class HttpClient {
         String request =  "http://localhost:8080/register?email="+email+"&nome="+nome+"&telefone="+phone+"&password="+ password;
 
         sendRequest(request, "POST", null, false);
+
+        authenticatev2(email,password);
     }
 
     private static void authenticate(Scanner scanner) {
@@ -101,7 +106,37 @@ public class HttpClient {
         try {
             URL url = new URL("http://localhost:8080/login");
             connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Authorization", "Basic " + credentials);
+            connection.setDoOutput(true);
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode == 200) {
+                Scanner responseScanner = new Scanner(connection.getInputStream());
+                if (responseScanner.hasNext()) {
+                    jwtToken = responseScanner.nextLine();
+                    System.out.println("Autenticação bem-sucedida. Token JWT recebido.");
+                }
+                responseScanner.close();
+            } else {
+                System.out.println("Falha na autenticação. Código: " + responseCode);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
+        }
+    }
+
+    private static void authenticatev2(String email, String password) {
+        String credentials = Base64.getEncoder().encodeToString((email + ":" + password).getBytes());
+        HttpURLConnection connection = null;
+        try {
+            URL url = new URL("http://localhost:8080/login");
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
             connection.setRequestProperty("Authorization", "Basic " + credentials);
             connection.setDoOutput(true);
 
@@ -126,12 +161,12 @@ public class HttpClient {
     }
 
     private static void listGroups() {
-        System.out.println("=== Listar Grupos ===");
+        System.out.println("\n=== Listar Grupos ===");
         sendRequest("http://localhost:8080/grupos", "GET", null, true);
     }
 
     private static void insertExpense(Scanner scanner) {
-        System.out.println("=== Inserir Despesa ===");
+        System.out.println("\n=== Inserir Despesa ===");
         System.out.print("Nome do Grupo: ");
         String group = scanner.nextLine();
         System.out.print("Descrição: ");
@@ -147,8 +182,9 @@ public class HttpClient {
     }
 
     private static void listExpenses(Scanner scanner) {
-        System.out.println("=== Listar Despesas ===");
+        System.out.println("\n=== Listar Despesas ===");
         System.out.print("Nome do Grupo: ");
+        scanner.nextLine();
         String group = scanner.nextLine();
         sendRequest("http://localhost:8080/" + group + "/despesas", "GET", null, true);
     }
@@ -156,6 +192,7 @@ public class HttpClient {
     private static void deleteExpense(Scanner scanner) {
         System.out.println("=== Eliminar Despesa ===");
         System.out.print("Nome do Grupo: ");
+        scanner.nextLine();
         String group = scanner.nextLine();
         System.out.print("ID da Despesa: ");
         int expenseId = scanner.nextInt();
@@ -184,7 +221,6 @@ public class HttpClient {
 
             int responseCode = connection.getResponseCode();
 
-
             System.out.println("Código de resposta: " + responseCode);
             if (responseCode == 200 || responseCode == 201) {
                 Scanner responseScanner = new Scanner(connection.getInputStream());
@@ -193,12 +229,8 @@ public class HttpClient {
                 }
                 responseScanner.close();
             } else {
-                System.out.println("Erro na requisição - >");
-                Scanner responseScanner = new Scanner(connection.getInputStream());
-                while (responseScanner.hasNextLine()) {
-                    System.out.println(responseScanner.nextLine());
-                }
-                responseScanner.close();
+                System.out.println("Erro na requisição");
+
             }
         } catch (IOException e) {
             e.printStackTrace();

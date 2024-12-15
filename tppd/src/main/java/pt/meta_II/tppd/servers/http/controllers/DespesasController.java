@@ -61,7 +61,7 @@ public class DespesasController {
                     .body(retu);
         }
         else return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body("Precisa de estar logado para aceder a este conteúdo");
+                .body("Não tem autorização para aceder a este conteúdo.");
     }
 
     @PostMapping("/{grupo}/eliminar")
@@ -91,7 +91,7 @@ public class DespesasController {
                         .body("Ocorreu um erro ao eliminar a despesa. Por favor, tente novamente.");
         }
         else return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body("Precisa de estar logado para aceder a este conteúdo");
+                .body("Não tem autorização para aceder a este conteúdo.");
     }
 
     @PostMapping("/{grupo}/adicionar")

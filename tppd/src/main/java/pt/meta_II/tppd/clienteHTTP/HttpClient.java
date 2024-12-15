@@ -42,7 +42,6 @@ public class HttpClient {
                     if (jwtToken!=null)
                         break;
                 }
-
                 else{
                     System.out.println("\nNúmero Inválido. Tente novamente");
                     scanner.nextLine();
@@ -186,7 +185,7 @@ public class HttpClient {
         scanner.nextLine();//flush
         String descricao = scanner.nextLine();
         System.out.print("Elementos a partilhar (<email> <email> ...): ");
-        scanner.nextLine();//flush
+        //scanner.nextLine();//flush
         String comQuem = scanner.nextLine();
 
         String[] partilhas = comQuem.split(" ");

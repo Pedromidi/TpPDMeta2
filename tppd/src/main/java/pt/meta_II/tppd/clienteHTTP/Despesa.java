@@ -1,4 +1,4 @@
-package pt.meta_II.tppd.servers.http.models;
+package pt.meta_II.tppd.clienteHTTP;
 
 public class Despesa {
 
@@ -55,4 +55,5 @@ public class Despesa {
     public void setPartilhas(String[] partilhas) {
         this.partilhas = partilhas;
     }
+
 }

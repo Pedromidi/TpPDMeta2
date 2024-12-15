@@ -1,5 +1,8 @@
 package pt.meta_II.tppd.clienteHTTP;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -40,9 +43,13 @@ public class HttpClient {
                         break;
                 }
 
-                else System.out.println("\nNúmero Inválido. Tente novamente");
+                else{
+                    System.out.println("\nNúmero Inválido. Tente novamente");
+                    scanner.nextLine();
+                }
             }catch (InputMismatchException e){
                 System.out.println("\nNúmero Inválido. Tente novamente");
+                scanner.nextLine();
             }
         }while (true);
 
@@ -78,18 +85,22 @@ public class HttpClient {
                 }
             }catch (InputMismatchException e){
                 System.out.println("Número Inválido. Tente novamente");
+                scanner.nextLine();
+            }catch (JsonProcessingException e){
+                System.out.println("Não foi possivel criar uma nova despesa....");
+                scanner.nextLine();
             }
         }
     }
 
-    private static void register(Scanner scanner) {
+    private static void register(Scanner scanner) throws InputMismatchException{
         System.out.println("=== Registrar ===");
         System.out.print("Nome: ");
         String nome = scanner.next();
         System.out.print("Email: ");
         String email = scanner.next();
         System.out.print("Telefone: ");
-        String phone = scanner.next();
+        int phone = scanner.nextInt();
         System.out.print("Senha: ");
         String password = scanner.next();
 
@@ -97,7 +108,7 @@ public class HttpClient {
 
         sendRequest(request, "POST", null, false);
 
-        //authenticate(email,password);
+        //dá login depois do registo
         String credentials = Base64.getEncoder().encodeToString((email + ":" + password).getBytes());
         HttpURLConnection connection = null;
         try {
@@ -145,7 +156,6 @@ public class HttpClient {
                         errorScanner.close();
                     }
                 }
-
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -160,25 +170,32 @@ public class HttpClient {
         sendRequest("http://localhost:8080/grupos", "GET", null, true);
     }
 
-    private static void insertExpense(Scanner scanner) {
+    private static void insertExpense(Scanner scanner) throws JsonProcessingException {
         System.out.println("\n=== Inserir Despesa ===");
         System.out.print("Nome do Grupo: ");
+        scanner.nextLine();//flush
         String group = scanner.nextLine();
         System.out.print("Quem Pagou: ");
         String quem = scanner.nextLine();
         System.out.print("Valor: ");
-        float value = scanner.nextFloat();
+        float valor = scanner.nextFloat();
         System.out.print("Data (dd/mm/aa): ");
         String data = scanner.next();
 
-        System.out.print("Descrição: ");
-        String description = scanner.nextLine();
+        System.out.print("Descricao: ");
+        scanner.nextLine();//flush
+        String descricao = scanner.nextLine();
+        System.out.print("Elementos a partilhar (<email> <email> ...): ");
+        scanner.nextLine();//flush
+        String comQuem = scanner.nextLine();
 
-        scanner.nextFloat(); // Consumir nova linha
+        String[] partilhas = comQuem.split(" ");
 
-        //TODO, o metodo nao está a receber uma string.... mas sim uma Despesa, e tbm não é no corpo...
-        String body = String.format("{\"description\":\"%s\",\"value\":%f}", description, value);
-        sendRequest("http://localhost:8080/" + group + "/adicionar", "POST", body, true);
+        Despesa despesa = new Despesa(quem,data,valor,descricao,partilhas);
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonString = mapper.writeValueAsString(despesa);
+
+        sendRequest("http://localhost:8080/" + group + "/adicionar", "POST", jsonString, true);
     }
 
     private static void listExpenses(Scanner scanner) {
@@ -189,7 +206,7 @@ public class HttpClient {
         sendRequest("http://localhost:8080/" + group + "/despesas", "GET", null, true);
     }
 
-    private static void deleteExpense(Scanner scanner) {
+    private static void deleteExpense(Scanner scanner) throws InputMismatchException{
         System.out.println("=== Eliminar Despesa ===");
         System.out.print("Nome do Grupo: ");
         scanner.nextLine();

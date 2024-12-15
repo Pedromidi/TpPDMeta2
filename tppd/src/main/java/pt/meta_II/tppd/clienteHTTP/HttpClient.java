@@ -116,6 +116,15 @@ public class HttpClient {
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Authorization", "Basic " + credentials);
             connection.setDoOutput(true);
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode == 200) {
+                Scanner responseScanner = new Scanner(connection.getInputStream());
+                if (responseScanner.hasNext()) {
+                    jwtToken = responseScanner.nextLine();
+                }
+                responseScanner.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
